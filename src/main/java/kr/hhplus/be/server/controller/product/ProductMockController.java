@@ -1,8 +1,8 @@
 package kr.hhplus.be.server.controller.product;
 
 import kr.hhplus.be.server.config.dto.ResponseDTO;
-import kr.hhplus.be.server.controller.dto.ProductsResponseDTO;
-import kr.hhplus.be.server.controller.dto.TopProductResponseDTO;
+import kr.hhplus.be.server.controller.product.dto.ProductsResponseDTO;
+import kr.hhplus.be.server.controller.product.dto.TopProductResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

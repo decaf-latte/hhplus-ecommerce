@@ -1,9 +1,9 @@
 package kr.hhplus.be.server.controller.balance;
 
 import kr.hhplus.be.server.config.dto.ResponseDTO;
-import kr.hhplus.be.server.controller.dto.BalanceChargeRequestDTO;
-import kr.hhplus.be.server.controller.dto.BalanceChargeResponseDTO;
-import kr.hhplus.be.server.controller.dto.BalanceResponseDTO;
+import kr.hhplus.be.server.controller.balance.dto.BalanceChargeRequestDTO;
+import kr.hhplus.be.server.controller.balance.dto.BalanceChargeResponseDTO;
+import kr.hhplus.be.server.controller.balance.dto.BalanceResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

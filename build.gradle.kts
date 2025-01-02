@@ -47,6 +47,7 @@ dependencies {
 
 	// Lombok
 	annotationProcessor("org.projectlombok:lombok")
+	compileOnly ("org.projectlombok:lombok")
 
 }
 

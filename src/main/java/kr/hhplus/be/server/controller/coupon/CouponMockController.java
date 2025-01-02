@@ -1,10 +1,10 @@
 package kr.hhplus.be.server.controller.coupon;
 
 import kr.hhplus.be.server.config.dto.ResponseDTO;
-import kr.hhplus.be.server.domain.type.CouponStatus;
-import kr.hhplus.be.server.controller.dto.CouponIssueRequestDTO;
-import kr.hhplus.be.server.controller.dto.CouponIssueResponseDTO;
-import kr.hhplus.be.server.controller.dto.CouponResponseDTO;
+import kr.hhplus.be.server.domain.coupon.code.CouponStatus;
+import kr.hhplus.be.server.controller.coupon.dto.CouponIssueRequestDTO;
+import kr.hhplus.be.server.controller.coupon.dto.CouponIssueResponseDTO;
+import kr.hhplus.be.server.controller.coupon.dto.CouponResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

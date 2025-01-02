@@ -1,10 +1,9 @@
 package kr.hhplus.be.server.controller.order;
 
 import kr.hhplus.be.server.config.dto.ResponseDTO;
-import kr.hhplus.be.server.controller.dto.CouponIssueResponseDTO;
-import kr.hhplus.be.server.controller.dto.OrderRequestDTO;
-import kr.hhplus.be.server.controller.dto.OrderResponseDTO;
-import kr.hhplus.be.server.domain.type.OrderStatus;
+import kr.hhplus.be.server.controller.order.dto.OrderRequestDTO;
+import kr.hhplus.be.server.controller.order.dto.OrderResponseDTO;
+import kr.hhplus.be.server.domain.order.code.OrderStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
