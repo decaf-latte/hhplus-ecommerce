@@ -44,6 +44,11 @@ dependencies {
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+
+	// Lombok
+	annotationProcessor("org.projectlombok:lombok")
+	compileOnly ("org.projectlombok:lombok")
+
 }
 
 tasks.withType<Test> {
