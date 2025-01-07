@@ -1,21 +1,22 @@
-package kr.hhplus.be.server.domain.coupon.entity;
+package kr.hhplus.be.server.domain.balance.entity;
 
 import jakarta.persistence.*;
-import kr.hhplus.be.server.domain.coupon.code.CouponStatus;
+import kr.hhplus.be.server.domain.balance.code.BalanceType;
 import kr.hhplus.be.server.domain.user.entity.User;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "balance_history")
 @Getter
-@NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-@Table(name = "user_coupon")
-public class UserCoupon {
+@NoArgsConstructor
+public class BalanceHistory {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,16 +27,12 @@ public class UserCoupon {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "coupon_id", nullable = false)
-    private Coupon coupon;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "status", nullable = false)
-    private CouponStatus status;
+    @Column(nullable = false, name = "type")
+    private BalanceType type;
 
-    @Column(name = "expired_at", nullable = false)
-    private LocalDateTime expiredAt;
+    @Column(nullable = false, name = "change_amount")
+    private BigDecimal amount;
 
     @CreatedDate
     @Column(name = "created_at")
@@ -46,14 +43,10 @@ public class UserCoupon {
     private LocalDateTime updatedAt;
 
     @Builder(builderMethodName = "of")
-    public UserCoupon(User user, Coupon coupon, CouponStatus status, LocalDateTime expiredAt) {
+    public BalanceHistory(User user, BigDecimal amount, BalanceType type) {
         this.user = user;
-        this.coupon = coupon;
-        this.status = status;
-        this.expiredAt = expiredAt;
-    }
-
-    public void use() {
-        this.status = CouponStatus.USED;
+        this.amount = amount;
+        this.type = type;
     }
 }
+
