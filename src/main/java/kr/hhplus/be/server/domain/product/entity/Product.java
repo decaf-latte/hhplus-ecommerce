@@ -52,6 +52,16 @@ public class Product {
         this.status = status;
     }
 
+    //테스트용
+    @Builder(builderMethodName = "testBuilder")
+    public Product(Long id, String name, BigDecimal price, int stock, ProductStatus status) {
+        this.id = id; // 테스트용으로 ID 설정
+        this.name = name;
+        this.price = price;
+        this.stock = stock;
+        this.status = status;
+    }
+
     public void reduceStock(int quantity) {
         this.stock -= quantity;
     }
