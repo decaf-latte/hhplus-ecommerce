@@ -52,6 +52,8 @@ dependencies {
 	annotationProcessor("org.projectlombok:lombok")
 	compileOnly ("org.projectlombok:lombok")
 
+	//feign client
+	implementation ("org.springframework.cloud:spring-cloud-starter-openfeign")
 
 }
 
