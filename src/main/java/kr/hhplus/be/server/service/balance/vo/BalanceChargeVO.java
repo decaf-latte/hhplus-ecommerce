@@ -1,21 +1,20 @@
-package kr.hhplus.be.server.controller.balance.dto;
+package kr.hhplus.be.server.service.balance.vo;
 
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 import java.math.BigDecimal;
 
 @Getter
-@Setter
 @NoArgsConstructor
-public class BalanceChargeRequestDTO {
+public class BalanceChargeVO {
+
     private long userId;
     private BigDecimal amount;
 
     @Builder
-    public BalanceChargeRequestDTO(long userId, BigDecimal amount) {
+    public BalanceChargeVO(long userId, BigDecimal amount) {
         this.userId = userId;
         this.amount = amount;
     }
