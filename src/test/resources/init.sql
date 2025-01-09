@@ -123,11 +123,24 @@ CREATE TABLE cart_item (
                            FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
 );
 
+-- CouponUsedHistory 테이블 생성
+CREATE TABLE coupon_used_history (
+                                     id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                                     user_id BIGINT NOT NULL,
+                                     user_coupon_id BIGINT NOT NULL,
+                                     used_type ENUM('USED', 'EXPIRED') NOT NULL,
+                                     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+                                     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+                                     FOREIGN KEY (user_id) REFERENCES `user`(id) ON DELETE CASCADE,
+                                     FOREIGN KEY (user_coupon_id) REFERENCES user_coupon(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
 
 -- User 데이터 삽입
 INSERT INTO `user` (name, email, balance, created_at, updated_at)
 VALUES
-    ('Alice', 'alice@example.com', 2000.00, NOW(), NOW()),
+    ('Alice', 'alice@example.com', 5000.00, NOW(), NOW()),
     ('Bob', 'bob@example.com', 300.00, NOW(), NOW()),
     ('Charlie', 'charlie@example.com', 1500.00, NOW(), NOW());
 
@@ -135,7 +148,10 @@ VALUES
 INSERT INTO product (name, price, stock, status, created_at, updated_at)
 VALUES
     ('Laptop', 1000.00, 10, 'SALE', NOW(), NOW()),
-    ('Smartphone', 800.00, 20, 'SALE', NOW(), NOW());
+    ('Smartphone', 800.00, 20, 'SALE', NOW(), NOW()),
+    ('Tablet', 500.00, 15, 'SALE', NOW(), NOW()),
+    ('Monitor', 300.00, 5, 'SALE', NOW(), NOW()),
+    ('Keyboard', 50.00, 50, 'SALE', NOW(), NOW());
 
 -- Coupon 데이터 삽입
 INSERT INTO coupon (name, code, discount, stock, register_start_date, register_end_date, available_day, created_at, updated_at)
@@ -152,7 +168,7 @@ VALUES
 -- BalanceHistory 데이터 삽입
 INSERT INTO balance_history (user_id, type, change_amount, created_at, updated_at)
 VALUES
-    (1, 'CHARGE', 2000.00, NOW(), NOW()),
+    (1, 'CHARGE', 5000.00, NOW(), NOW()),
     (2, 'CHARGE', 500.00, NOW(), NOW()),
     (3, 'CHARGE', 1500.00, NOW(), NOW()),
     (2, 'USE', -200.00, NOW(), NOW());
@@ -160,12 +176,37 @@ VALUES
 -- Order 데이터 삽입
 INSERT INTO `order` (user_id, total_price, status, created_at, updated_at)
 VALUES
-    (1, 1200.00, 'COMPLETED', NOW(), NOW());
+    (1, 1200.00, 'COMPLETED', NOW(), NOW()),
+    (1, 1500.00, 'COMPLETED', NOW(), NOW()),
+    (2, 800.00, 'PENDING', NOW(), NOW()),
+    (3, 600.00, 'CANCELED', NOW(), NOW()),
+    (3, 1000.00, 'COMPLETED', NOW(), NOW()),
+    (1, 2000.00, 'COMPLETED', NOW(), NOW()),
+    (2, 400.00, 'PENDING', NOW(), NOW()),
+    (3, 700.00, 'CANCELED', NOW(), NOW()),
+    (2, 500.00, 'COMPLETED', NOW(), NOW()),
+    (1, 1800.00, 'PENDING', NOW(), NOW()),
+    (2, 1200.00, 'COMPLETED', NOW(), NOW()),
+    (3, 1400.00, 'COMPLETED', NOW(), NOW());
 
 -- OrderItem 데이터 삽입
 INSERT INTO order_item (order_id, product_id, quantity, price, created_at, updated_at)
 VALUES
-    (1, 1, 1, 1000.00, NOW(), NOW());
+    (1, 1, 1, 1000.00, NOW(), NOW()),
+    (1, 2, 1, 200.00, NOW(), NOW()),
+    (2, 3, 2, 1000.00, NOW(), NOW()),
+    (3, 2, 1, 800.00, NOW(), NOW()),
+    (4, 3, 2, 1200.00, NOW(), NOW()),
+    (5, 4, 1, 300.00, NOW(), NOW()),
+    (6, 1, 2, 2000.00, NOW(), NOW()),
+    (7, 5, 4, 200.00, NOW(), NOW()),
+    (8, 2, 1, 700.00, NOW(), NOW()),
+    (9, 3, 1, 500.00, NOW(), NOW()),
+    (10, 4, 3, 1500.00, NOW(), NOW()),
+    (11, 5, 5, 250.00, NOW(), NOW()),
+    (11, 3, 3, 1500.00, NOW(), NOW()),
+    (12, 2, 4, 3200.00, NOW(), NOW()),
+    (12, 1, 1, 1000.00, NOW(), NOW());
 
 -- Payment 데이터 삽입
 INSERT INTO payment (order_id, amount, created_at, updated_at)
@@ -185,4 +226,5 @@ VALUES
 -- CartItem 데이터 삽입
 INSERT INTO cart_item (user_id, product_id, quantity, created_at, updated_at)
 VALUES
-    (1, 2, 2, NOW(), NOW());
+    (1, 2, 2, NOW(), NOW()),
+    (2, 2, 2, NOW(), NOW());
