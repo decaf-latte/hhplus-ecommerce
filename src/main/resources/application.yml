@@ -37,6 +37,19 @@ spring:
     url: jdbc:mysql://localhost:3307/hhplus?characterEncoding=UTF-8&serverTimezone=UTC
     username: application
     password: application
+  jpa:
+    open-in-view: false
+    generate-ddl: false
+    show-sql: true
+    hibernate:
+      ddl-auto: none
+  sql:
+    init:
+      mode: always
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.type: trace
 
 ---
 springdoc:
