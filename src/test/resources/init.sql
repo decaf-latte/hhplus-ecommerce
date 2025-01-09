@@ -163,7 +163,7 @@ VALUES
 INSERT INTO user_coupon (user_id, coupon_id, status, expired_at, created_at, updated_at)
 VALUES
     (1, 1, 'ACTIVE', DATE_ADD(NOW(), INTERVAL 30 DAY), NOW(), NOW()),
-    (2, 2, 'ACTIVE', DATE_ADD(NOW(), INTERVAL 30 DAY), NOW(), NOW());
+    (2, 2, 'EXPIRED', DATE_ADD(NOW(), INTERVAL 30 DAY), NOW(), NOW());
 
 -- BalanceHistory 데이터 삽입
 INSERT INTO balance_history (user_id, type, change_amount, created_at, updated_at)

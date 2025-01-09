@@ -36,7 +36,7 @@ public class OrderItemServiceImpl implements OrderItemService {
     public List<TopOrderItemVO> getTopOrderItems(){
 
         Pageable pageable = PageRequest.of(0, 5); // 5개의 데이터만 가져옴
-        return orderItemRepository.findTopOrderItemsLast3Days(LocalDate.now().minusDays(3),pageable);
+        return orderItemRepository.findTopOrderItemsLast3Days(LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(3),pageable);
 
     }
 }
