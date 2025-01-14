@@ -11,32 +11,13 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 public class OrderRequestDTO {
-    private long userId;
-    private List<OrderItemDTO> orderItems;
+
+    private List<Long> cartItemIds;
+    private Long userCouponId;
 
     @Builder
-    public OrderRequestDTO(long userId, List<OrderItemDTO> orderItems) {
-        this.userId = userId;
-        this.orderItems = orderItems;
+    public OrderRequestDTO(List<Long> cartItemIds, Long userCouponId) {
+        this.cartItemIds = cartItemIds;
+        this.userCouponId = userCouponId;
     }
-
-
-    @Getter
-    @Setter
-    @NoArgsConstructor
-    private static class OrderItemDTO {
-        private long productId;
-        private int quantity;
-        private int price;
-
-
-        @Builder
-        public OrderItemDTO(long productId, int quantity, int price) {
-            this.productId = productId;
-            this.quantity = quantity;
-            this.price = price;
-        }
-    }
-
-
 }

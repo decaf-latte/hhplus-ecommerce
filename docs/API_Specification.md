@@ -1,6 +1,9 @@
 # **이커머스 API 명세서**
 
 ---
+![swagger](./img/swagger-ui.png)
+
+---
 
 ## **1. 상품 조회 API**
 

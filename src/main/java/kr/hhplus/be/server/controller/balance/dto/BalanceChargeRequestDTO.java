@@ -5,15 +5,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+
 @Getter
 @Setter
 @NoArgsConstructor
 public class BalanceChargeRequestDTO {
     private long userId;
-    private int amount;
+    private BigDecimal amount;
 
     @Builder
-    public BalanceChargeRequestDTO(long userId, int amount) {
+    public BalanceChargeRequestDTO(long userId, BigDecimal amount) {
         this.userId = userId;
         this.amount = amount;
     }
