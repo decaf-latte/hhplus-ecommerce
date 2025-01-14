@@ -11,7 +11,7 @@ import kr.hhplus.be.server.service.coupon.vo.UserCouponVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.awt.print.Pageable;
+import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 @Tag(name = "쿠폰 API", description = "쿠폰 발급 / 보유 쿠폰 조회 API")
@@ -44,7 +44,7 @@ public class CouponController {
 
         return ResponsePageDTO.success(
                 responseDTO,
-                pageable.getNumberOfPages(),
+                pageable.getPageNumber(),
                 responseDTO.getUserCoupons().size()
         );
     }

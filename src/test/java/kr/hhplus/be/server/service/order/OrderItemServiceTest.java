@@ -6,7 +6,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import kr.hhplus.be.server.domain.order.entity.Order;
@@ -59,7 +59,7 @@ class OrderItemServiceTest {
     @Test
     @DisplayName("최근 3일간 가장 많이 판매된 상품을 조회")
     void getTopOrderItems_Success() {
-        LocalDate threeDaysAgo = LocalDate.now().minusDays(3);
+        LocalDateTime threeDaysAgo = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(3);
         Pageable pageable = PageRequest.of(0, 5);
 
         TopOrderItemVO topOrderItem1 = new TopOrderItemVO(1L, 10L);
