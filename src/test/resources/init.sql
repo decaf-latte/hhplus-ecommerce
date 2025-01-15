@@ -142,7 +142,17 @@ INSERT INTO `user` (name, email, balance, created_at, updated_at)
 VALUES
     ('Alice', 'alice@example.com', 5000.00, NOW(), NOW()),
     ('Bob', 'bob@example.com', 300.00, NOW(), NOW()),
-    ('Charlie', 'charlie@example.com', 5000.00, NOW(), NOW());
+    ('Charlie', 'charlie@example.com', 5000.00, NOW(), NOW()),
+    ('one', 'one@example.com', 5000.00, NOW(), NOW()),
+    ('two', 'two@example.com', 5000.00, NOW(), NOW()),
+    ('three', 'three@example.com', 5000.00, NOW(), NOW()),
+    ('four', 'four@example.com', 5000.00, NOW(), NOW()),
+    ('five', 'five@example.com', 5000.00, NOW(), NOW()),
+    ('six', 'six@example.com', 5000.00, NOW(), NOW()),
+    ('seven', 'seven@example.com', 5000.00, NOW(), NOW()),
+    ('eight', 'eight@example.com', 5000.00, NOW(), NOW()),
+    ('nine', 'nine@example.com', 5000.00, NOW(), NOW()),
+    ('ten', 'ten@example.com', 5000.00, NOW(), NOW());
 
 -- Product 데이터 삽입
 INSERT INTO product (name, price, stock, status, created_at, updated_at)
@@ -151,13 +161,15 @@ VALUES
     ('Smartphone', 800.00, 20, 'SALE', NOW(), NOW()),
     ('Tablet', 500.00, 15, 'SALE', NOW(), NOW()),
     ('Monitor', 300.00, 5, 'SALE', NOW(), NOW()),
-    ('Keyboard', 50.00, 50, 'SALE', NOW(), NOW());
+    ('Keyboard', 50.00, 50, 'SALE', NOW(), NOW()),
+    ('Earbuds', 50.00, 2, 'SALE', NOW(), NOW());
 
 -- Coupon 데이터 삽입
 INSERT INTO coupon (name, code, discount, stock, register_start_date, register_end_date, available_day, created_at, updated_at)
 VALUES
     ('10% OFF', 'DISCOUNT10', 10.0, 100, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 30, NOW(), NOW()),
-    ('20% OFF', 'DISCOUNT20', 20.0, 50, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 30, NOW(), NOW());
+    ('20% OFF', 'DISCOUNT20', 20.0, 50, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 30, NOW(), NOW()),
+    ('30% OFF', 'DISCOUNT30', 30.0, 5, NOW(), DATE_ADD(NOW(), INTERVAL 30 DAY), 30, NOW(), NOW());
 
 -- UserCoupon 데이터 삽입
 INSERT INTO user_coupon (user_id, coupon_id, status, expired_at, created_at, updated_at)
@@ -171,6 +183,8 @@ VALUES
     (1, 'CHARGE', 5000.00, NOW(), NOW()),
     (2, 'CHARGE', 500.00, NOW(), NOW()),
     (3, 'CHARGE', 5000.00, NOW(), NOW()),
+    (9, 'CHARGE', 5000.00, NOW(), NOW()),
+    (10, 'CHARGE', 5000.00, NOW(), NOW()),
     (2, 'USE', -200.00, NOW(), NOW());
 
 -- Order 데이터 삽입
@@ -229,4 +243,6 @@ VALUES
     (1, 2, 2, NOW(), NOW()),
     (2, 2, 2, NOW(), NOW()),
     (3, 2, 2, NOW(), NOW()),
-    (3, 2, 2, NOW(), NOW());
+    (3, 2, 2, NOW(), NOW()),
+    (9, 6, 2, NOW(), NOW()),
+    (10, 6, 2, NOW(), NOW());
