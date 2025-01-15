@@ -1,38 +1,51 @@
 package kr.hhplus.be.server.controller.exception;
 
-import jakarta.persistence.EntityNotFoundException;
 import kr.hhplus.be.server.config.dto.ResponseDTO;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @Slf4j
 @RestControllerAdvice
 public class ControllerExceptionHandler {
 
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseDTO<Object> handleEntityNotFoundException(EntityNotFoundException e) {
-
-        log.error(e.getMessage());
-        return ResponseDTO.fail(e.getMessage(), null);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler(IllegalStateException.class)
-    public ResponseDTO<Object> handleIllegalStateException(IllegalStateException e) {
-
-        log.error("error: ", e);
-        return ResponseDTO.fail(e.getMessage(), null);
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler({Exception.class, InterruptedException.class})
+    @ExceptionHandler(Exception.class)
     public ResponseDTO<Object> handleException(Exception e) {
-
-        log.error("error: ", e);
+        log.error("Unexpected Exception: ", e);
         return ResponseDTO.fail("내부적인 오류 발생.", null);
     }
+
+    @ExceptionHandler(CommerceUserException.class)
+    public ResponseEntity<ResponseDTO<Object>> handleUserException(CommerceUserException e) {
+        log.error("UserException: {}", e.getMessage());
+        return ResponseEntity
+            .status(e.getStatus())
+            .body(ResponseDTO.fail(e.getMessage(), e.getErrorCode()));
+    }
+
+    @ExceptionHandler(CommerceProductException.class)
+    public ResponseEntity<ResponseDTO<Object>> handleProductException(CommerceProductException e) {
+        log.error("ProductException: {}", e.getMessage());
+        return ResponseEntity
+            .status(e.getStatus())
+            .body(ResponseDTO.fail(e.getMessage(), e.getErrorCode()));
+    }
+
+    @ExceptionHandler(CommerceCouponException.class)
+    public ResponseEntity<ResponseDTO<Object>> handleCouponException(CommerceCouponException e) {
+        log.error("CouponException: {}", e.getMessage());
+        return ResponseEntity
+            .status(e.getStatus())
+            .body(ResponseDTO.fail(e.getMessage(), e.getErrorCode()));
+    }
+
+    @ExceptionHandler(CommerceOrderException.class)
+    public ResponseEntity<ResponseDTO<Object>> handleOrderException(CommerceOrderException e) {
+        log.error("OrderException: {}", e.getMessage());
+        return ResponseEntity
+            .status(e.getStatus())
+            .body(ResponseDTO.fail(e.getMessage(), e.getErrorCode()));
+    }
+
 }

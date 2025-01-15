@@ -1,14 +1,17 @@
 package kr.hhplus.be.server.controller.order.application;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.List;
-
 import kr.hhplus.be.server.client.DataPlatformClient;
+import kr.hhplus.be.server.controller.exception.CommerceCouponException;
+import kr.hhplus.be.server.controller.exception.CommerceOrderException;
+import kr.hhplus.be.server.controller.exception.CommerceProductException;
+import kr.hhplus.be.server.controller.exception.CommerceUserException;
 import kr.hhplus.be.server.domain.balance.entity.BalanceHistory;
 import kr.hhplus.be.server.domain.cart.entity.CartItem;
+import kr.hhplus.be.server.domain.common.ErrorCode;
 import kr.hhplus.be.server.domain.coupon.code.CouponStatus;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
@@ -75,7 +78,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         List<CartItem> cartItems = cartItemService.getCartItemsByIds(cartItemIds);
 
         if (cartItemIds.size() != cartItems.size()) {
-            throw new IllegalArgumentException("Cart items count mismatch.");
+            throw new CommerceOrderException(ErrorCode.CART_ITEM_COUNT_MISMATCH);
         }
 
         cartItems.forEach(this::validateCartItem);
@@ -84,12 +87,12 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
 
     private void validateCartItem(CartItem cartItem) {
         if (cartItem.getQuantity() <= 0) {
-            throw new IllegalArgumentException("Invalid product quantity.");
+            throw new CommerceProductException(ErrorCode.INVALID_PRODUCT_QUANTITY);
         }
 
         Product product = cartItem.getProduct();
         if (ObjectUtils.isEmpty(product) || !ProductStatus.SALE.equals(product.getStatus()) || product.getStock() < cartItem.getQuantity()) {
-            throw new IllegalArgumentException("Invalid product state or stock.");
+            throw new CommerceProductException(ErrorCode.PRODUCT_INSUFFICIENT_INVENTORY);
         }
     }
 
@@ -105,7 +108,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         }
 
         UserCoupon userCoupon = userCouponService.getUserCouponByCouponIdAndUserId(userCouponId, user.getId())
-                .orElseThrow(() -> new EntityNotFoundException("Coupon not found."));
+                .orElseThrow(() -> new CommerceCouponException(ErrorCode.COUPON_NOT_EXIST));
 
         validateUserCoupon(userCoupon);
 
@@ -124,7 +127,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
 
     private void validateUserCoupon(UserCoupon userCoupon) {
         if (!CouponStatus.ACTIVE.equals(userCoupon.getStatus()) || LocalDateTime.now().isAfter(userCoupon.getExpiredAt())) {
-            throw new IllegalArgumentException("Invalid or expired coupon.");
+            throw new CommerceCouponException(ErrorCode.COUPON_NOT_AVAILABLE);
         }
     }
 
@@ -141,7 +144,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         BigDecimal needPayBalanceAmount = totalPrice.subtract(couponDiscountPrice);
 
         if (balanceHistoryService.calculate(user).compareTo(needPayBalanceAmount) < 0) {
-            throw new IllegalArgumentException("Insufficient balance.");
+            throw new CommerceUserException(ErrorCode.INSUFFICIENT_BALANCE);
         }
 
         BalanceHistory usedBalanceHistory = balanceHistoryService.use(user, needPayBalanceAmount);

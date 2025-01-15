@@ -1,7 +1,9 @@
 package kr.hhplus.be.server.controller.balance.application;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.math.BigDecimal;
+import kr.hhplus.be.server.controller.exception.CommerceUserException;
 import kr.hhplus.be.server.domain.balance.code.BalanceType;
+import kr.hhplus.be.server.domain.common.ErrorCode;
 import kr.hhplus.be.server.domain.user.entity.User;
 import kr.hhplus.be.server.service.balance.BalanceHistoryService;
 import kr.hhplus.be.server.service.balance.vo.BalanceChargeVO;
@@ -10,8 +12,6 @@ import kr.hhplus.be.server.service.user.UserService;
 import kr.hhplus.be.server.service.user.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.math.BigDecimal;
 
 @Service
 @RequiredArgsConstructor
@@ -25,7 +25,7 @@ public class BalanceApplicationServiceImpl implements BalanceApplicationService 
     public BalanceVO chargeBalance(BalanceChargeVO chargeVO) {
 
         User user = userService.getUserById(chargeVO.getUserId())
-                .orElseThrow(() -> new EntityNotFoundException("User not found."));
+            .orElseThrow(() -> new CommerceUserException(ErrorCode.USER_NOT_EXIST));
 
         //최종 잔액
         BigDecimal resultBalance = balanceService.chargeBalance(chargeVO,user);
@@ -44,7 +44,7 @@ public class BalanceApplicationServiceImpl implements BalanceApplicationService 
     public UserVO getUser(Long userId) {
 
         User user = userService.getUserById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found."));
+            .orElseThrow(() -> new CommerceUserException(ErrorCode.USER_NOT_EXIST));
 
         return UserVO.builder()
                 .id(user.getId())

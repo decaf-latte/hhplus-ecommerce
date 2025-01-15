@@ -1,6 +1,9 @@
 package kr.hhplus.be.server.controller.coupon.application;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import kr.hhplus.be.server.controller.exception.CommerceCouponException;
+import kr.hhplus.be.server.controller.exception.CommerceUserException;
+import kr.hhplus.be.server.domain.common.ErrorCode;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.user.entity.User;
@@ -12,8 +15,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Slf4j
 @Service
@@ -30,12 +31,12 @@ public class CouponApplicationServiceImpl implements CouponApplicationService {
     public void issueCouponByCode(long userId, String couponCode) {
 
         // 사용자 조회
-        User user = userService.getUserById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User not found. userId: " + userId));
+        User user = userService.getUserById(userId)
+            .orElseThrow(() -> new CommerceUserException(ErrorCode.USER_NOT_EXIST));
 
         // 쿠폰 조회
         Coupon coupon = couponService.getCouponByCode(couponCode)
-                .orElseThrow(() -> new EntityNotFoundException("Coupon not found. couponCode: " + couponCode));
+                .orElseThrow(() -> new CommerceCouponException(ErrorCode.COUPON_NOT_EXIST));
 
         // 쿠폰 발급
         couponService.issueCoupon(coupon);
@@ -49,8 +50,8 @@ public class CouponApplicationServiceImpl implements CouponApplicationService {
     public List<UserCouponVO> getUserCoupons(Long userId) {
 
         // 사용자 조회
-        User user = userService.getUserById(userId).orElseThrow(
-                () -> new EntityNotFoundException("User not found. userId: " + userId));
+        User user = userService.getUserById(userId)
+            .orElseThrow(() -> new CommerceUserException(ErrorCode.USER_NOT_EXIST));
 
         // 사용자 보유 쿠폰 목록 조회
         List<UserCoupon> userCoupons = userCouponService.getUserCoupons(user);

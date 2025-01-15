@@ -3,6 +3,8 @@ package kr.hhplus.be.server.service.coupon;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import kr.hhplus.be.server.controller.exception.CommerceCouponException;
+import kr.hhplus.be.server.domain.common.ErrorCode;
 import kr.hhplus.be.server.domain.coupon.code.CouponStatus;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
@@ -26,7 +28,7 @@ public class UserCouponServiceImpl implements UserCouponService {
         // 이미 발급된 쿠폰인지 확인
         getUserCouponByCouponIdAndUserId(coupon.getId(), user.getId())
                 .ifPresent(userCoupon -> {
-                    throw new IllegalArgumentException("User already has the coupon.");
+                    throw new CommerceCouponException(ErrorCode.COUPON_ALREADY_ISSUED);
                 });
 
         LocalDateTime expiredAt = LocalDateTime.now();
