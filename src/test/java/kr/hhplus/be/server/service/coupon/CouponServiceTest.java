@@ -10,9 +10,9 @@ import static org.mockito.Mockito.when;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import kr.hhplus.be.server.controller.exception.CommerceCouponException;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
-import kr.hhplus.be.server.service.coupon.CouponServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -76,11 +76,11 @@ class CouponServiceTest {
                 .stock(10)
                 .build();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CommerceCouponException exception = assertThrows(CommerceCouponException.class, () -> {
             couponService.issueCoupon(coupon);
         });
 
-        assertEquals("Coupon registration period is not valid.", exception.getMessage());
+        assertEquals("쿠폰 등록 기간이 유효하지 않습니다.", exception.getMessage());
     }
 
     @Test
@@ -89,13 +89,13 @@ class CouponServiceTest {
         Coupon coupon = Coupon.of()
                 .registerStartDate(LocalDateTime.now().minusDays(1))
                 .registerEndDate(LocalDateTime.now().plusDays(1))
-                .stock(10)
+                .stock(0)
                 .build();
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CommerceCouponException exception = assertThrows(CommerceCouponException.class, () -> {
             couponService.issueCoupon(coupon);
         });
 
-        assertEquals("Coupon stock is insufficient.", exception.getMessage());
+        assertEquals("쿠폰 재고가 부족합니다.", exception.getMessage());
     }
 }
