@@ -33,6 +33,7 @@ import kr.hhplus.be.server.service.order.vo.OrderVO;
 import kr.hhplus.be.server.service.payment.PaymentBalanceService;
 import kr.hhplus.be.server.service.payment.PaymentCouponService;
 import kr.hhplus.be.server.service.payment.PaymentService;
+import kr.hhplus.be.server.service.product.ProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -52,6 +53,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
     private final PaymentBalanceService paymentBalanceService;
     private final PaymentCouponService paymentCouponService;
     private final DataPlatformClient dataClient;
+    private final ProductService productService;
 
     @Override
     @Transactional
@@ -59,6 +61,8 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         List<CartItem> cartItems = validateAndFetchCartItems(cartItemIds);
         BigDecimal totalPrice = calculateTotalPrice(cartItems);
         User user = cartItems.get(0).getUser();
+
+        validateProductStock(cartItems);
 
         Order order = createOrderWithItems(user, totalPrice, cartItems);
         BigDecimal couponDiscountPrice = applyCouponDiscount(userCouponId, user, totalPrice);
@@ -91,8 +95,20 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         }
 
         Product product = cartItem.getProduct();
-        if (ObjectUtils.isEmpty(product) || !ProductStatus.SALE.equals(product.getStatus()) || product.getStock() < cartItem.getQuantity()) {
+        if (ObjectUtils.isEmpty(product) || !ProductStatus.SALE.equals(product.getStatus())) {
             throw new CommerceProductException(ErrorCode.PRODUCT_INSUFFICIENT_INVENTORY);
+        }
+    }
+
+    private void validateProductStock(List<CartItem> cartItems) {
+        for (CartItem cartItem : cartItems) {
+      Product product =
+          productService
+              .getProductByProductId(cartItem.getProduct().getId())
+              .orElseThrow(() -> new CommerceProductException(ErrorCode.PRODUCT_NOT_EXIST));
+            if (product.getStock() < cartItem.getQuantity()) {
+                throw new CommerceProductException(ErrorCode.PRODUCT_INSUFFICIENT_INVENTORY);
+            }
         }
     }
 
