@@ -1,11 +1,13 @@
 package kr.hhplus.be.server.controller.coupon.applicaion;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
-
 import kr.hhplus.be.server.controller.coupon.application.CouponApplicationServiceImpl;
+import kr.hhplus.be.server.controller.exception.CommerceCouponException;
+import kr.hhplus.be.server.controller.exception.CommerceUserException;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
 import kr.hhplus.be.server.domain.user.entity.User;
 import kr.hhplus.be.server.service.coupon.UserCouponService;
@@ -69,7 +71,7 @@ class CouponApplicationServiceTest {
         String couponCode = "DISCOUNT10";
 
         // When / Then
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(CommerceUserException.class, () ->
                 couponApplicationService.issueCouponByCode(invalidUserId, couponCode)
         );
     }
@@ -82,7 +84,7 @@ class CouponApplicationServiceTest {
         String invalidCouponCode = "INVALID123";
 
         // When / Then
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(CommerceCouponException.class, () ->
                 couponApplicationService.issueCouponByCode(userId, invalidCouponCode)
         );
     }
@@ -108,7 +110,7 @@ class CouponApplicationServiceTest {
         long invalidUserId = 999L;
 
         // When / Then
-        assertThrows(EntityNotFoundException.class, () ->
+        assertThrows(CommerceUserException.class, () ->
                 couponApplicationService.getUserCoupons(invalidUserId)
         );
     }

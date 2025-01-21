@@ -1,17 +1,17 @@
 package kr.hhplus.be.server.controller.product.application;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.stream.Collectors;
+import kr.hhplus.be.server.controller.exception.CommerceProductException;
+import kr.hhplus.be.server.domain.common.ErrorCode;
 import kr.hhplus.be.server.service.order.OrderItemService;
 import kr.hhplus.be.server.service.order.vo.TopOrderItemVO;
 import kr.hhplus.be.server.service.product.ProductService;
 import kr.hhplus.be.server.service.product.vo.ProductVO;
 import kr.hhplus.be.server.service.product.vo.TopProductVO;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-
 import org.springframework.data.domain.Pageable;
-import java.util.List;
-import java.util.stream.Collectors;
+import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +35,7 @@ public class ProductApplicationServiceImpl implements ProductApplicationService{
                 .map(orderItem -> {
                     ProductVO productVO = productService.getProductByProductId(orderItem.getProductId())
                             .map(ProductVO::from)
-                            .orElseThrow(() -> new EntityNotFoundException("Product not found."));
+                            .orElseThrow(() -> new CommerceProductException(ErrorCode.PRODUCT_NOT_EXIST));
 
                     return new TopProductVO(
                             productVO.getId(),

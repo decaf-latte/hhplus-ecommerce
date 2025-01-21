@@ -57,3 +57,11 @@ springdoc:
     path: /api-docs
   swagger-ui:
     path: /swagger-ui.html
+
+spring:
+  cloud:
+    openfeign:
+      client:
+        config:
+          dataPlatformClient:
+            url: ${dataPlatformClient.url}

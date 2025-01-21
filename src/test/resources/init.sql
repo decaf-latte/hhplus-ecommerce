@@ -142,7 +142,7 @@ INSERT INTO `user` (name, email, balance, created_at, updated_at)
 VALUES
     ('Alice', 'alice@example.com', 5000.00, NOW(), NOW()),
     ('Bob', 'bob@example.com', 300.00, NOW(), NOW()),
-    ('Charlie', 'charlie@example.com', 1500.00, NOW(), NOW());
+    ('Charlie', 'charlie@example.com', 5000.00, NOW(), NOW());
 
 -- Product 데이터 삽입
 INSERT INTO product (name, price, stock, status, created_at, updated_at)
@@ -170,7 +170,7 @@ INSERT INTO balance_history (user_id, type, change_amount, created_at, updated_a
 VALUES
     (1, 'CHARGE', 5000.00, NOW(), NOW()),
     (2, 'CHARGE', 500.00, NOW(), NOW()),
-    (3, 'CHARGE', 1500.00, NOW(), NOW()),
+    (3, 'CHARGE', 5000.00, NOW(), NOW()),
     (2, 'USE', -200.00, NOW(), NOW());
 
 -- Order 데이터 삽입
@@ -227,4 +227,6 @@ VALUES
 INSERT INTO cart_item (user_id, product_id, quantity, created_at, updated_at)
 VALUES
     (1, 2, 2, NOW(), NOW()),
-    (2, 2, 2, NOW(), NOW());
+    (2, 2, 2, NOW(), NOW()),
+    (3, 2, 2, NOW(), NOW()),
+    (3, 2, 2, NOW(), NOW());

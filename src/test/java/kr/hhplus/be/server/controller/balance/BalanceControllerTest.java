@@ -1,6 +1,13 @@
 package kr.hhplus.be.server.controller.balance;
 
+import static org.hamcrest.Matchers.is;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.math.BigDecimal;
 import kr.hhplus.be.server.controller.balance.application.BalanceApplicationService;
 import kr.hhplus.be.server.service.balance.vo.BalanceChargeVO;
 import org.junit.jupiter.api.DisplayName;
@@ -13,12 +20,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
-import java.math.BigDecimal;
-
-import static org.hamcrest.Matchers.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
 @Testcontainers
@@ -87,7 +88,7 @@ class BalanceControllerTest {
         // When & Then
         mockMvc.perform(get("/api/v1/balance/999"))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.message", is("User not found.")))
+                .andExpect(jsonPath("$.message", is("존재하지 않는 사용자입니다."))) // 수정: ErrorCode 메시지 반영
                 .andExpect(jsonPath("$.success", is(false)));
     }
 }

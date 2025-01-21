@@ -1,10 +1,16 @@
 package kr.hhplus.be.server.controller.balance.application;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import java.math.BigDecimal;
+import kr.hhplus.be.server.controller.exception.CommerceUserException;
 import kr.hhplus.be.server.domain.balance.code.BalanceType;
 import kr.hhplus.be.server.service.balance.vo.BalanceChargeVO;
 import kr.hhplus.be.server.service.balance.vo.BalanceVO;
 import kr.hhplus.be.server.service.user.vo.UserVO;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
@@ -12,13 +18,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.junit.jupiter.api.Test;
-
-
-import java.math.BigDecimal;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @SpringBootTest
 @Testcontainers
@@ -86,9 +85,9 @@ class BalanceApplicationServiceTest {
 
         // When / Then
         Exception exception = org.junit.jupiter.api.Assertions.assertThrows(
-                jakarta.persistence.EntityNotFoundException.class,
+                CommerceUserException.class,
                 () -> balanceApplicationService.getUser(invalidUserId)
         );
-        assertEquals("User not found.", exception.getMessage());
+        assertEquals("존재하지 않는 사용자입니다.", exception.getMessage());
     }
 }

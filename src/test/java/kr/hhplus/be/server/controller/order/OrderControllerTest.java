@@ -6,12 +6,15 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import java.io.IOException;
 import java.util.List;
 
 import kr.hhplus.be.server.controller.order.dto.OrderRequestDTO;
 import kr.hhplus.be.server.domain.order.code.OrderStatus;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -28,6 +31,9 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 class OrderControllerTest {
 
+    private static MockWebServer mockWebServer;
+
+
     @Container
     static final MySQLContainer<?> mysqlContainer = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("hhplus")
@@ -40,6 +46,34 @@ class OrderControllerTest {
         registry.add("spring.datasource.url", mysqlContainer::getJdbcUrl);
         registry.add("spring.datasource.username", mysqlContainer::getUsername);
         registry.add("spring.datasource.password", mysqlContainer::getPassword);
+    }
+
+    @BeforeAll
+    static void setUpMockWebServer() throws IOException {
+        mockWebServer = new MockWebServer();
+        mockWebServer.start(); // MockWebServer 시작
+
+    }
+
+    @AfterAll
+    static void tearDownMockWebServer() throws IOException {
+        if (mockWebServer != null) {
+            mockWebServer.shutdown(); // MockWebServer 중지
+        }
+    }
+
+    @DynamicPropertySource
+    static void configurePropertiesRegistry(DynamicPropertyRegistry registry) {
+        registry.add("dataPlatformClient.url",
+                () -> mockWebServer.url("/api").toString());
+    }
+
+    @BeforeEach
+    void setUpMockResponses() {
+        mockWebServer.enqueue(new MockResponse()
+                .setResponseCode(200)
+                .addHeader("Content-Type", "application/json")
+                .setBody("true"));
     }
 
     @Autowired
@@ -73,7 +107,7 @@ class OrderControllerTest {
     @DisplayName("주문 성공 - 쿠폰 사용 X")
     void payOrderSuccess_notUseCoupon() throws Exception {
         // Given: init.sql 데이터 기준으로 카트 아이템 설정
-        List<Long> cartItemIds = List.of(1L, 2L); // Alice가 보유한 CartItem ID들 (Laptop, Smartphone)
+        List<Long> cartItemIds = List.of(3L, 4L);
 
         // OrderRequestDTO 생성
         OrderRequestDTO requestDTO = new OrderRequestDTO(cartItemIds, null);

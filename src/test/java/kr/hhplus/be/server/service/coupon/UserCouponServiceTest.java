@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.List;
 import java.util.Optional;
+import kr.hhplus.be.server.controller.exception.CommerceCouponException;
 import kr.hhplus.be.server.domain.coupon.code.CouponStatus;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.entity.UserCoupon;
@@ -52,11 +53,11 @@ class UserCouponServiceTest {
         when(userCouponRepository.findByIdAndUserId(any(), any()))
                 .thenReturn(Optional.of(existingUserCoupon));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+        CommerceCouponException exception = assertThrows(CommerceCouponException.class, () -> {
             userCouponService.issueCoupon(user, coupon);
         });
 
-        assertEquals("User already has the coupon.", exception.getMessage());
+        assertEquals("이미 발급된 쿠폰입니다.", exception.getMessage());
     }
 
 
