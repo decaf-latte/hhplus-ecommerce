@@ -1,6 +1,8 @@
 package kr.hhplus.be.server.service.product;
 
-import jakarta.persistence.EntityNotFoundException;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 import kr.hhplus.be.server.domain.product.code.ProductStatus;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
@@ -10,10 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -33,7 +31,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Optional<Product> getProductByProductId(long id) {
+    public Optional<Product> getProductByProductIdWithLock(long id) {
         return productRepository.findById(id);
     }
 

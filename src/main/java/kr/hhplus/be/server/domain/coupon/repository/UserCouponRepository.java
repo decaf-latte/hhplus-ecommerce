@@ -12,7 +12,7 @@ import java.util.Optional;
 @Repository
 public interface UserCouponRepository extends JpaRepository<UserCoupon, Long> {
 
-    List<UserCoupon> findByUser(User user);
+    List<UserCoupon> findByUserWithLock(User user);
 
     @EntityGraph(attributePaths = {"coupon"})
     Optional<UserCoupon> findByIdAndUserId(Long id, Long userId);

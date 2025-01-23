@@ -11,7 +11,6 @@ import kr.hhplus.be.server.domain.balance.code.BalanceType;
 import kr.hhplus.be.server.domain.balance.entity.BalanceHistory;
 import kr.hhplus.be.server.domain.balance.repository.BalanceHistoryRepository;
 import kr.hhplus.be.server.domain.user.entity.User;
-import kr.hhplus.be.server.service.balance.BalanceHistoryServiceImpl;
 import kr.hhplus.be.server.service.balance.vo.BalanceChargeVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -85,7 +84,7 @@ class BalanceHistoryServiceTest {
         User user = User.of().name("Test User").balance(BigDecimal.ZERO).build();
         BalanceHistory history1 = BalanceHistory.of().user(user).type(BalanceType.CHARGE).amount(new BigDecimal("100")).build();
         BalanceHistory history2 = BalanceHistory.of().user(user).type(BalanceType.USE).amount(new BigDecimal("50")).build();
-        when(balanceHistoryRepository.findByUser(user)).thenReturn(List.of(history1, history2));
+        when(balanceHistoryRepository.findByUserWithLock(user)).thenReturn(List.of(history1, history2));
 
         BigDecimal result = balanceHistoryService.calculate(user);
 
@@ -97,7 +96,7 @@ class BalanceHistoryServiceTest {
     @DisplayName("사용자 잔액이 없는 경우 0을 반환합니다")
     void calculate_balance_no_history() {
         User user = User.of().name("Test User").balance(BigDecimal.ZERO).build();
-        when(balanceHistoryRepository.findByUser(user)).thenReturn(Collections.emptyList());
+        when(balanceHistoryRepository.findByUserWithLock(user)).thenReturn(Collections.emptyList());
 
         BigDecimal result = balanceHistoryService.calculate(user);
 

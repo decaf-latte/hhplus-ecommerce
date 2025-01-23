@@ -53,7 +53,7 @@ public class UserCouponServiceImpl implements UserCouponService {
     @Override
     @Transactional(readOnly = true)
     public List<UserCoupon> getUserCoupons(User user) {
-        return userCouponRepository.findByUser(user);
+        return userCouponRepository.findByUserWithLock(user);
     }
 
     @Override

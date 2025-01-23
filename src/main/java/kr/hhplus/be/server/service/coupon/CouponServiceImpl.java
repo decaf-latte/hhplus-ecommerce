@@ -19,7 +19,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public Optional<Coupon> getCouponByCode(String code) {
-        return couponRepository.findByCode(code);
+        return couponRepository.findByUserWithLock(code);
     }
 
     @Override

@@ -104,7 +104,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         for (CartItem cartItem : cartItems) {
       Product product =
           productService
-              .getProductByProductId(cartItem.getProduct().getId())
+              .getProductByProductIdWithLock(cartItem.getProduct().getId())
               .orElseThrow(() -> new CommerceProductException(ErrorCode.PRODUCT_NOT_EXIST));
             if (product.getStock() < cartItem.getQuantity()) {
                 throw new CommerceProductException(ErrorCode.PRODUCT_INSUFFICIENT_INVENTORY);

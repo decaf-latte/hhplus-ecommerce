@@ -1,27 +1,24 @@
 package kr.hhplus.be.server.service.product;
 
-import jakarta.persistence.EntityNotFoundException;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.Mockito.when;
+
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Optional;
 import kr.hhplus.be.server.domain.product.code.ProductStatus;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.product.repository.ProductRepository;
 import kr.hhplus.be.server.service.product.vo.ProductVO;
 import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.Mockito.when;
-
-
-import java.math.BigDecimal;
-import java.util.List;
-import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 class ProductServiceTest {
@@ -68,7 +65,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("제품 ID로 제품을 조회 - 성공")
-    void getProductByProductId_shouldReturnProduct() {
+    void getProductByProductIdWithLock_shouldReturnProductWithLock() {
 
         long productId = 1L;
 
@@ -81,7 +78,7 @@ class ProductServiceTest {
 
         when(productRepository.findById(anyLong())).thenReturn(Optional.of(product));
 
-        Optional<Product> result = productService.getProductByProductId(productId);
+        Optional<Product> result = productService.getProductByProductIdWithLock(productId);
 
         assertThat(result).isNotNull();
         assertThat(result).isPresent();
@@ -90,7 +87,7 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("제품 ID로 제품을 조회 - 실패 시 예외 발생")
-    void getProductByProductId_shouldThrowExceptionWhenNotFound() {
+    void getProductByProductIdWithLock_WithLock_shouldThrowExceptionWhenNotFound() {
         long productId = 1L;
         when(productRepository.findById(productId)).thenReturn(Optional.empty());
 
