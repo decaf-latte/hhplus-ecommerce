@@ -1,6 +1,7 @@
 package kr.hhplus.be.server.controller.balance;
 
 import static org.hamcrest.Matchers.is;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -8,7 +9,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
-import kr.hhplus.be.server.controller.balance.application.BalanceApplicationService;
+import java.math.RoundingMode;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import kr.hhplus.be.server.domain.user.entity.User;
+import kr.hhplus.be.server.domain.user.repository.UserRepository;
+import kr.hhplus.be.server.service.balance.BalanceHistoryService;
 import kr.hhplus.be.server.service.balance.vo.BalanceChargeVO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +27,6 @@ import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-
 
 @Testcontainers
 @AutoConfigureMockMvc
@@ -34,7 +40,10 @@ class BalanceControllerTest {
     private ObjectMapper objectMapper;
 
     @Autowired
-    private BalanceApplicationService balanceApplicationService;
+    private BalanceHistoryService balanceHistoryService;
+
+    @Autowired
+    private UserRepository userRepository;
 
     private static final MySQLContainer<?> MYSQL_CONTAINER = new MySQLContainer<>("mysql:8.0")
             .withDatabaseName("hhplus")
@@ -91,4 +100,55 @@ class BalanceControllerTest {
                 .andExpect(jsonPath("$.message", is("존재하지 않는 사용자입니다."))) // 수정: ErrorCode 메시지 반영
                 .andExpect(jsonPath("$.success", is(false)));
     }
+
+    @Test
+    @DisplayName("잔액 동시성 테스트: 충전 및 사용 요청 동시 실행")
+    void balanceConcurrencyTest() throws InterruptedException {
+        // 초기 사용자 및 데이터 설정
+        Long userId = 1L; // 테스트 사용자 ID
+        User user = userRepository.findById(userId).orElseThrow(); // 사용자 조회
+        user.setBalance(BigDecimal.ZERO); // 초기 잔액 0으로 설정
+
+        BigDecimal chargeAmount = BigDecimal.valueOf(100); // 충전 금액
+        BigDecimal useAmount = BigDecimal.valueOf(50); // 사용 금액
+        int totalRequests = 20; // 총 요청 수 (충전 10, 사용 10)
+        BigDecimal expectedFinalBalance = BigDecimal.valueOf(5500.00); // 예상 최종 잔액 (충전 100 x 10 - 사용 50 x 10)
+        BigDecimal scaledExpected = expectedFinalBalance.setScale(2, RoundingMode.HALF_UP);
+
+
+        // 동시 요청 실행 준비
+        ExecutorService executorService = Executors.newFixedThreadPool(20);
+        CountDownLatch latch = new CountDownLatch(totalRequests);
+
+        for (int i = 0; i < totalRequests; i++) {
+            boolean isCharge = i % 2 == 0; // 짝수 요청은 충전, 홀수 요청은 사용
+            executorService.submit(() -> {
+                try {
+                    if (isCharge) {
+                        // 충전 요청
+                        BalanceChargeVO chargeVO = BalanceChargeVO.builder()
+                                .amount(chargeAmount)
+                                .build();
+                        balanceHistoryService.chargeBalance(chargeVO, user);
+                    } else {
+                        // 사용 요청
+                        balanceHistoryService.use(user, useAmount);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    latch.countDown();
+                }
+            });
+        }
+
+        // 모든 요청이 종료될 때까지 대기
+        latch.await();
+        executorService.shutdown();
+
+        // 최종 잔액 검증
+        BigDecimal finalBalance = balanceHistoryService.calculate(user);
+        assertEquals(scaledExpected, finalBalance, "최종 잔액이 예상과 다릅니다.");
+    }
+
 }

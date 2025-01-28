@@ -66,7 +66,7 @@ class UserCouponServiceTest {
     void getUserCoupons_Success() {
         User user = User.of().build();
         List<UserCoupon> userCoupons = List.of(UserCoupon.of().build());
-        when(userCouponRepository.findByUser(user)).thenReturn(userCoupons);
+        when(userCouponRepository.findByUserWithLock(user)).thenReturn(userCoupons);
 
         List<UserCoupon> result = userCouponService.getUserCoupons(user);
 

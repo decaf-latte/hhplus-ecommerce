@@ -33,7 +33,7 @@ public class ProductApplicationServiceImpl implements ProductApplicationService{
 
         return topOrderItemVOList.stream()
                 .map(orderItem -> {
-                    ProductVO productVO = productService.getProductByProductId(orderItem.getProductId())
+                    ProductVO productVO = productService.getProductByProductIdWithLock(orderItem.getProductId())
                             .map(ProductVO::from)
                             .orElseThrow(() -> new CommerceProductException(ErrorCode.PRODUCT_NOT_EXIST));
 

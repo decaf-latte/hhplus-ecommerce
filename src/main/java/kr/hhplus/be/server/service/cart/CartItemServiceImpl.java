@@ -16,7 +16,7 @@ public class CartItemServiceImpl implements CartItemService {
     // 장바구니 가져오기
     @Override
     public List<CartItem> getCartItemsByIds(List<Long> cartItemIds) {
-        return cartItemRepository.findByIdIn(cartItemIds);
+        return cartItemRepository.findByUserWithLock(cartItemIds);
     }
 
     @Override

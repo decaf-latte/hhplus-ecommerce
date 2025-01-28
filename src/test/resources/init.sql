@@ -147,8 +147,8 @@ VALUES
     ('two', 'two@example.com', 5000.00, NOW(), NOW()),
     ('three', 'three@example.com', 5000.00, NOW(), NOW()),
     ('four', 'four@example.com', 5000.00, NOW(), NOW()),
-    ('five', 'five@example.com', 5000.00, NOW(), NOW()),
-    ('six', 'six@example.com', 5000.00, NOW(), NOW()),
+    ('five', 'five@example.com', 1000000.00, NOW(), NOW()),
+    ('six', 'six@example.com', 1000000.00, NOW(), NOW()),
     ('seven', 'seven@example.com', 5000.00, NOW(), NOW()),
     ('eight', 'eight@example.com', 5000.00, NOW(), NOW()),
     ('nine', 'nine@example.com', 5000.00, NOW(), NOW()),
@@ -162,7 +162,8 @@ VALUES
     ('Tablet', 500.00, 15, 'SALE', NOW(), NOW()),
     ('Monitor', 300.00, 5, 'SALE', NOW(), NOW()),
     ('Keyboard', 50.00, 50, 'SALE', NOW(), NOW()),
-    ('Earbuds', 50.00, 2, 'SALE', NOW(), NOW());
+    ('Earbuds', 50.00, 2, 'SALE', NOW(), NOW()),
+    ('Corn', 50.00, 30, 'SALE', NOW(), NOW());
 
 -- Coupon 데이터 삽입
 INSERT INTO coupon (name, code, discount, stock, register_start_date, register_end_date, available_day, created_at, updated_at)
@@ -185,6 +186,8 @@ VALUES
     (3, 'CHARGE', 5000.00, NOW(), NOW()),
     (9, 'CHARGE', 5000.00, NOW(), NOW()),
     (10, 'CHARGE', 5000.00, NOW(), NOW()),
+    (8, 'CHARGE', 1000000.00, NOW(), NOW()),
+    (9, 'CHARGE', 1000000.00, NOW(), NOW()),
     (2, 'USE', -200.00, NOW(), NOW());
 
 -- Order 데이터 삽입
@@ -245,4 +248,7 @@ VALUES
     (3, 2, 2, NOW(), NOW()),
     (3, 2, 2, NOW(), NOW()),
     (9, 6, 2, NOW(), NOW()),
-    (10, 6, 3, NOW(), NOW());
+    (10, 6, 3, NOW(), NOW()),
+    (10, 7, 1, NOW(), NOW()),
+    (8, 7, 1, NOW(), NOW())
+    ;

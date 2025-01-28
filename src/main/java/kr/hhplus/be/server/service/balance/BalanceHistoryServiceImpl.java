@@ -48,7 +48,7 @@ public class BalanceHistoryServiceImpl implements BalanceHistoryService {
     public BigDecimal calculate(User user) {
 
         // 사용자와 관련된 잔액 내역 조회
-        List<BalanceHistory> balanceHistories = balanceHistoryRepository.findByUser(user);
+        List<BalanceHistory> balanceHistories = balanceHistoryRepository.findByUserWithLock(user);
         if (balanceHistories.isEmpty()) {
             return BigDecimal.ZERO;
         }

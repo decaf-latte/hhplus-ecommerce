@@ -144,7 +144,9 @@ class OrderControllerConcurrentTest {
         // 모든 스레드가 완료될 때까지 대기
         latch.await();
 
-        assertFalse(orderRepository.findByUserId(userId1).isEmpty());
-        assertTrue(orderRepository.findByUserId(userId2).isEmpty());
+        assertFalse(orderRepository.findByUserWithLockId(userId1).isEmpty());
+        assertTrue(orderRepository.findByUserWithLockId(userId2).isEmpty());
     }
+
+
 }
