@@ -1,14 +1,18 @@
 package kr.hhplus.be.server.service.coupon;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+
 import kr.hhplus.be.server.controller.exception.CommerceCouponException;
 import kr.hhplus.be.server.domain.common.ErrorCode;
 import kr.hhplus.be.server.domain.coupon.entity.Coupon;
 import kr.hhplus.be.server.domain.coupon.repository.CouponRepository;
+import kr.hhplus.be.server.service.coupon.vo.CouponVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
@@ -19,7 +23,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public Optional<Coupon> getCouponByCode(String code) {
-        return couponRepository.findByUserWithLock(code);
+        return couponRepository.findByCouponWithLock(code);
     }
 
     @Override
@@ -29,6 +33,17 @@ public class CouponServiceImpl implements CouponService {
 
         coupon.issueCoupon();
         couponRepository.save(coupon);
+    }
+
+    @Override
+    public int getAvailableCouponCount(String couponCode) {
+        return couponRepository.getAvailableCouponCount(couponCode);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<CouponVO> getAvailableCoupons() {
+        return couponRepository.getAvailableCoupons().stream().map(CouponVO::from).toList();
     }
 
     private static void validIssueCoupon(Coupon coupon) {

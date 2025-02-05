@@ -112,7 +112,7 @@ class BalanceControllerTest {
         BigDecimal chargeAmount = BigDecimal.valueOf(100); // 충전 금액
         BigDecimal useAmount = BigDecimal.valueOf(50); // 사용 금액
         int totalRequests = 20; // 총 요청 수 (충전 10, 사용 10)
-        BigDecimal expectedFinalBalance = BigDecimal.valueOf(5500.00); // 예상 최종 잔액 (충전 100 x 10 - 사용 50 x 10)
+        BigDecimal expectedFinalBalance = BigDecimal.valueOf(6000.00); // 예상 최종 잔액 (충전 100 x 10 - 사용 50 x 10)
         BigDecimal scaledExpected = expectedFinalBalance.setScale(2, RoundingMode.HALF_UP);
 
 

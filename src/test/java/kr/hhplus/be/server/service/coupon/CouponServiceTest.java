@@ -34,7 +34,7 @@ class CouponServiceTest {
     void getCouponByCode_Success() {
         String code = "TESTCODE";
         Coupon coupon = Coupon.of().code(code).build();
-        when(couponRepository.findByUserWithLock(code)).thenReturn(Optional.of(coupon));
+        when(couponRepository.findByCouponWithLock(code)).thenReturn(Optional.of(coupon));
 
         Optional<Coupon> result = couponService.getCouponByCode(code);
 
@@ -46,7 +46,7 @@ class CouponServiceTest {
     @DisplayName("존재하지 않는 쿠폰 코드로 조회 시 빈 결과 반환")
     void getCouponByCode_NotFound() {
         String code = "INVALIDCODE";
-        when(couponRepository.findByUserWithLock(code)).thenReturn(Optional.empty());
+        when(couponRepository.findByCouponWithLock(code)).thenReturn(Optional.empty());
 
         Optional<Coupon> result = couponService.getCouponByCode(code);
 
