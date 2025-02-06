@@ -9,4 +9,7 @@ public interface CouponService {
     Optional<Coupon> getCouponByCode(String code);
 
     void issueCoupon(Coupon coupon);
+
+    int getAvailableCouponCount(String code);
+
 }
