@@ -57,6 +57,10 @@ dependencies {
 	//feign client
 	implementation ("org.springframework.cloud:spring-cloud-starter-openfeign")
 
+	//redis
+	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation ("org.springframework.boot:spring-boot-starter-cache")
+
 }
 
 

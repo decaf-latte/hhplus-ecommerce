@@ -19,7 +19,7 @@ public class CouponServiceImpl implements CouponService {
 
     @Override
     public Optional<Coupon> getCouponByCode(String code) {
-        return couponRepository.findByUserWithLock(code);
+        return couponRepository.findByCouponWithLock(code);
     }
 
     @Override
@@ -29,6 +29,11 @@ public class CouponServiceImpl implements CouponService {
 
         coupon.issueCoupon();
         couponRepository.save(coupon);
+    }
+
+    @Override
+    public int getAvailableCouponCount(String couponCode) {
+        return couponRepository.getAvailableCouponCount(couponCode);
     }
 
     private static void validIssueCoupon(Coupon coupon) {

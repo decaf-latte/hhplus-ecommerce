@@ -206,24 +206,24 @@ VALUES
     (2, 1200.00, 'COMPLETED', NOW(), NOW()),
     (3, 1400.00, 'COMPLETED', NOW(), NOW());
 
--- OrderItem 데이터 삽입
+-- OrderItem 데이터 삽입 (최근 3일간 데이터로 분산 저장)
 INSERT INTO order_item (order_id, product_id, quantity, price, created_at, updated_at)
 VALUES
-    (1, 1, 1, 1000.00, NOW(), NOW()),
-    (1, 2, 1, 200.00, NOW(), NOW()),
-    (2, 3, 2, 1000.00, NOW(), NOW()),
-    (3, 2, 1, 800.00, NOW(), NOW()),
-    (4, 3, 2, 1200.00, NOW(), NOW()),
-    (5, 4, 1, 300.00, NOW(), NOW()),
-    (6, 1, 2, 2000.00, NOW(), NOW()),
-    (7, 5, 4, 200.00, NOW(), NOW()),
-    (8, 2, 1, 700.00, NOW(), NOW()),
-    (9, 3, 1, 500.00, NOW(), NOW()),
-    (10, 4, 3, 1500.00, NOW(), NOW()),
-    (11, 5, 5, 250.00, NOW(), NOW()),
-    (11, 3, 3, 1500.00, NOW(), NOW()),
-    (12, 2, 4, 3200.00, NOW(), NOW()),
-    (12, 1, 1, 1000.00, NOW(), NOW());
+    (1, 1, 1, 1000.00, NOW() - INTERVAL 1 DAY, NOW()),  -- 하루 전
+    (1, 2, 1, 200.00, NOW() - INTERVAL 2 DAY, NOW()),   -- 이틀 전
+    (2, 3, 2, 1000.00, NOW() - INTERVAL 3 DAY, NOW()),  -- 삼일 전
+    (3, 2, 1, 800.00, NOW() - INTERVAL 1 DAY, NOW()),   -- 하루 전
+    (4, 3, 2, 1200.00, NOW() - INTERVAL 2 DAY, NOW()),  -- 이틀 전
+    (5, 4, 1, 300.00, NOW() - INTERVAL 3 DAY, NOW()),   -- 삼일 전
+    (6, 1, 2, 2000.00, NOW() - INTERVAL 1 DAY, NOW()),  -- 하루 전
+    (7, 5, 4, 200.00, NOW() - INTERVAL 2 DAY, NOW()),   -- 이틀 전
+    (8, 2, 1, 700.00, NOW() - INTERVAL 3 DAY, NOW()),   -- 삼일 전
+    (9, 3, 1, 500.00, NOW() - INTERVAL 1 DAY, NOW()),   -- 하루 전
+    (10, 4, 3, 1500.00, NOW() - INTERVAL 2 DAY, NOW()), -- 이틀 전
+    (11, 5, 5, 250.00, NOW() - INTERVAL 3 DAY, NOW()),  -- 삼일 전
+    (11, 3, 3, 1500.00, NOW() - INTERVAL 1 DAY, NOW()), -- 하루 전
+    (12, 2, 4, 3200.00, NOW() - INTERVAL 2 DAY, NOW()), -- 이틀 전
+    (12, 1, 1, 1000.00, NOW() - INTERVAL 3 DAY, NOW()); -- 삼일 전
 
 -- Payment 데이터 삽입
 INSERT INTO payment (order_id, amount, created_at, updated_at)
