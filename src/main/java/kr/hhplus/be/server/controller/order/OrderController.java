@@ -22,7 +22,7 @@ public class OrderController {
     // 주문
     @Operation(summary = "주문 결제", description = "사용자의 주문결제를 처리합니다.")
     @PostMapping("/api/v1/orders")
-    public ResponseDTO<OrderResponseDTO> parOrder(@RequestBody OrderRequestDTO requestDTO) {
+    public ResponseDTO<OrderResponseDTO> payOrder(@RequestBody OrderRequestDTO requestDTO) {
 
         OrderVO orderVO = orderApplicationService.payOrder(requestDTO.getCartItemIds(), requestDTO.getUserCouponId());
         OrderResponseDTO responseDTO = OrderResponseDTO.from(orderVO);

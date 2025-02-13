@@ -23,6 +23,8 @@ import kr.hhplus.be.server.domain.payment.entity.PaymentCoupon;
 import kr.hhplus.be.server.domain.product.code.ProductStatus;
 import kr.hhplus.be.server.domain.product.entity.Product;
 import kr.hhplus.be.server.domain.user.entity.User;
+import kr.hhplus.be.server.event.order.PaidOrderEvent;
+import kr.hhplus.be.server.event.order.OrderEventPublisher;
 import kr.hhplus.be.server.service.balance.BalanceHistoryService;
 import kr.hhplus.be.server.service.cart.CartItemService;
 import kr.hhplus.be.server.service.coupon.CouponUsedHistoryService;
@@ -53,6 +55,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
     private final PaymentBalanceService paymentBalanceService;
     private final PaymentCouponService paymentCouponService;
     private final DataPlatformClient dataClient;
+    private final OrderEventPublisher orderEventPublisher;
     private final ProductService productService;
 
     @Override
@@ -72,8 +75,8 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
 
         productStockReduce(order.getOrderItems());
 
-        //외부 api에 데이터 전송
-        dataClient.sendData();
+        // 주문 결제 성공 이벤트 발행
+        orderEventPublisher.publishPaidOrderEvent(new PaidOrderEvent(order.getId()));
 
         return OrderVO.from(order);
     }
