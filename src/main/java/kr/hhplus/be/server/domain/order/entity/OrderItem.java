@@ -14,7 +14,12 @@ import java.time.LocalDateTime;
 @Getter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
-@Table(name = "order_item")
+@Table(
+        name = "order_item",
+        indexes = {
+                @Index(name = "idx_orderitem_created_orderid", columnList = "created_at, order_id")
+        }
+)
 public class OrderItem {
 
     @Id
