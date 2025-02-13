@@ -80,6 +80,7 @@ CREATE TABLE order_item (
                             FOREIGN KEY (order_id) REFERENCES `order`(id) ON DELETE CASCADE,
                             FOREIGN KEY (product_id) REFERENCES product(id) ON DELETE CASCADE
 );
+ALTER TABLE order_item ADD INDEX idx_orderitem_created_orderid (created_at, order_id);
 
 -- Payment 테이블
 CREATE TABLE payment (
