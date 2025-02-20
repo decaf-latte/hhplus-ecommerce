@@ -76,7 +76,7 @@ public class OrderApplicationServiceImpl implements OrderApplicationService {
         productStockReduce(order.getOrderItems());
 
         // 주문 결제 성공 이벤트 발행
-        orderEventPublisher.publishPaidOrderEvent(new PaidOrderEvent(order.getId()));
+        orderEventPublisher.publishPaidOrderEvent(PaidOrderEvent.of(order.getId()));
 
         return OrderVO.from(order);
     }

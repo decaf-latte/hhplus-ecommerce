@@ -136,6 +136,17 @@ CREATE TABLE coupon_used_history (
                                      FOREIGN KEY (user_coupon_id) REFERENCES user_coupon(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
+-- outbox_event 테이블 생성
+CREATE TABLE outbox_event (
+                              id BIGINT AUTO_INCREMENT PRIMARY KEY,
+                              aggregate_id BIGINT NOT NULL,
+                              aggregate_type VARCHAR(255) NOT NULL,
+                              event_type VARCHAR(255) NOT NULL,
+                              payload TEXT NOT NULL,
+                              status ENUM('PENDING', 'PUBLISHED') NOT NULL DEFAULT 'PENDING',
+                              created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
 
 
 -- User 데이터 삽입
