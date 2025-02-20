@@ -50,6 +50,13 @@ spring:
     redis:
       host: localhost
       port: 6379
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: spring-group
+      auto-offset-reset: earliest
+    producer:
+      retries: 3
 logging:
   level:
     org.hibernate.SQL: debug
