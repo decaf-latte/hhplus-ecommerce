@@ -1,41 +1,46 @@
 package kr.hhplus.be.server.controller.order.application;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-
-import java.io.IOException;
-import java.util.List;
+import kr.hhplus.be.server.config.KafkaTestConfig;
 import kr.hhplus.be.server.controller.exception.CommerceCouponException;
 import kr.hhplus.be.server.controller.exception.CommerceOrderException;
 import kr.hhplus.be.server.controller.exception.CommerceUserException;
 import kr.hhplus.be.server.domain.cart.entity.CartItem;
 import kr.hhplus.be.server.domain.cart.repository.CartItemRepository;
 import kr.hhplus.be.server.domain.common.ErrorCode;
+import kr.hhplus.be.server.domain.outbox.code.OutboxEventStatus;
+import kr.hhplus.be.server.domain.outbox.entity.OutboxEvent;
+import kr.hhplus.be.server.domain.outbox.repository.OutboxEventRepository;
 import kr.hhplus.be.server.domain.user.entity.User;
 import kr.hhplus.be.server.domain.user.repository.UserRepository;
 import kr.hhplus.be.server.service.order.vo.OrderVO;
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.kafka.test.EmbeddedKafkaBroker;
+import org.springframework.kafka.test.context.EmbeddedKafka;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.transaction.annotation.Transactional;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
+import java.io.IOException;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
+import static org.junit.jupiter.api.Assertions.*;
+
 @SpringBootTest
 @Testcontainers
 @ActiveProfiles("test")
-@Transactional
+@EmbeddedKafka(partitions = 1, topics = "order-paid")
+@Import(KafkaTestConfig.class)
 class OrderApplicationServiceTest {
 
     @Container
@@ -57,11 +62,19 @@ class OrderApplicationServiceTest {
     @Autowired
     private OrderApplicationServiceImpl orderApplicationServiceImpl;
 
+    @Autowired
+    private OutboxEventRepository outboxEventRepository;
+
     @BeforeAll
     static void setUpMockWebServer() throws IOException {
         mockWebServer = new MockWebServer();
         mockWebServer.start(); // MockWebServer 시작
 
+    }
+
+    @BeforeEach
+    void clearOutboxTable() {
+        outboxEventRepository.deleteAll();
     }
 
     @AfterAll
@@ -100,8 +113,6 @@ class OrderApplicationServiceTest {
         assertNotNull(result);
         assertEquals(user.getId(), result.getUser().getId());
 
-        // MockWebServer 요청 검증 (요청 횟수와 상세 검증)
-        assertEquals(1, mockWebServer.getRequestCount());
     }
 
 
@@ -131,5 +142,43 @@ class OrderApplicationServiceTest {
             orderApplicationServiceImpl.payOrder(List.of(cartItem.getId()), 2L);
         });
         assertEquals("사용할 수 없는 쿠폰입니다.", exception.getMessage());
+    }
+
+    @Test
+    @DisplayName("Outbox 이벤트 저장 확인")
+    public void testPayOrder_SavesEventToOutbox(@Autowired EmbeddedKafkaBroker embeddedKafkaBroker) {
+        // Given
+        String brokerAddress = embeddedKafkaBroker.getBrokersAsString();
+
+        CartItem cartItem = cartItemRepository.findById(3L).orElseThrow(() -> new CommerceOrderException(ErrorCode.CART_ITEM_COUNT_MISMATCH));
+
+        // When: 주문 결제
+        orderApplicationServiceImpl.payOrder(List.of(cartItem.getId()), null);
+
+        // Then
+        List<OutboxEvent> events = outboxEventRepository.findAll();
+        assertThat(events).hasSize(1);
+        assertThat(events.get(0).getStatus()).isEqualTo(OutboxEventStatus.PENDING);
+
+        System.out.println("Kafka Broker Address: " + brokerAddress);
+    }
+
+    @Test
+    @DisplayName("Kafka로 발행된 후 Outbox 상태가 PUBLISHED로 변경되는지 확인")
+    public void testOutboxEventProcessedByKafka(@Autowired EmbeddedKafkaBroker embeddedKafkaBroker) {
+        // Given: Outbox 이벤트가 PENDING 상태로 저장됨
+        CartItem cartItem = cartItemRepository.findById(4L)
+                .orElseThrow(() -> new CommerceOrderException(ErrorCode.CART_ITEM_COUNT_MISMATCH));
+
+        orderApplicationServiceImpl.payOrder(List.of(cartItem.getId()), null);
+
+        // When: Kafka 메시지가 전송된 후 상태 변경 확인
+        await().atMost(5, TimeUnit.SECONDS).untilAsserted(() -> {
+            List<OutboxEvent> events = outboxEventRepository.findAll();
+            assertThat(events).hasSize(1);
+            assertThat(events.get(0).getStatus()).isEqualTo(OutboxEventStatus.PUBLISHED);
+        });
+
+        System.out.println("Kafka Broker Address: " + embeddedKafkaBroker.getBrokersAsString());
     }
 }
