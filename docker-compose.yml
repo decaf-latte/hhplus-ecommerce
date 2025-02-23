@@ -1,3 +1,4 @@
+version: '3.8'
 services:
   mysql:
     image: mysql:8.0
@@ -19,6 +20,39 @@ services:
     container_name: redis_container
     ports:
       - "6379:6379"
+    networks:
+      - app-network
+
+  zookeeper:
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper
+    restart: always
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+    ports:
+      - '2181:2181'
+    networks:
+      - app-network
+
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    restart: always
+    depends_on:
+      - zookeeper
+    environment:
+      - KAFKA_BROKER_ID=1
+      - KAFKA_ZOOKEEPER_CONNECT=zookeeper:2181
+      - KAFKA_LISTENERS=PLAINTEXT://0.0.0.0:9092
+      - KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:9092
+      - KAFKA_AUTO_CREATE_TOPICS_ENABLE=true
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_OPTS=-Djava.security.auth.login.config=/dev/null
+      - KAFKA_ZOOKEEPER_SSL_CLIENT_ENABLE=false
+      - KAFKA_SASL_ENABLED_MECHANISMS=
+      - KAFKA_INTER_BROKER_LISTENER_NAME=PLAINTEXT
+    ports:
+      - '9092:9092'
     networks:
       - app-network
 

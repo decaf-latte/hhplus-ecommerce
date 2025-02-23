@@ -43,36 +43,42 @@ dependencies {
 
 	// Test
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
-	testImplementation("org.springframework.boot:spring-boot-testcontainers")
+	 testImplementation("org.springframework.boot:spring-boot-testcontainers")
 	testImplementation("org.testcontainers:junit-jupiter")
 	testImplementation("org.testcontainers:mysql")
-	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
-	testImplementation ("com.squareup.okhttp3:mockwebserver:3.4.0")
-
+	testImplementation("com.squareup.okhttp3:mockwebserver:3.4.0")
+	testImplementation("org.testcontainers:kafka:1.19.4") // 최신 버전 적용
+	testImplementation("org.springframework.kafka:spring-kafka-test")
 
 	// Lombok
 	annotationProcessor("org.projectlombok:lombok")
-	compileOnly ("org.projectlombok:lombok")
+	compileOnly("org.projectlombok:lombok")
 
-	//feign client
-	implementation ("org.springframework.cloud:spring-cloud-starter-openfeign")
+	// Feign Client
+	implementation("org.springframework.cloud:spring-cloud-starter-openfeign")
 
-	//redis
-	implementation ("org.springframework.boot:spring-boot-starter-data-redis")
-	implementation ("org.springframework.boot:spring-boot-starter-cache")
+	// Redis
+	implementation("org.springframework.boot:spring-boot-starter-data-redis")
+	implementation("org.springframework.boot:spring-boot-starter-cache")
 
+	// Kafka
+	implementation("org.springframework.boot:spring-boot-starter-web")
+	implementation("org.springframework.kafka:spring-kafka")
 }
-
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	systemProperty("junit.platform.configuration.parameter.allowMultipleJunitPlatformPropertiesFiles", "false") // 중복 설정 무시
 	systemProperty("user.timezone", "UTC")
+}
+
+tasks.named<Copy>("processTestResources") {
+	exclude("junit-platform.properties")
 }
 
 tasks.named<JavaCompile>("compileJava") {
 	options.annotationProcessorPath = configurations.annotationProcessor.get()
 }
-
 
 sourceSets {
 	named("main") {
